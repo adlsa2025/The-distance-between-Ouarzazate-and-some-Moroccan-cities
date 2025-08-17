@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distances from Ouarzazate to Moroccan Cities</title>
+    <style>
+        .distance-chart {
+            max-width: 100%;
+            margin: 20px 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .chart-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .chart-header h2 {
+            margin: 0;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+
+        .chart-header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        .chart-container {
+            padding: 0;
+            background: white;
+        }
+
+        .distance-row {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .distance-row:hover {
+            background-color: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .distance-row:last-child {
+            border-bottom: none;
+        }
+
+        .city-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .city-name {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .distance-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .distance-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 80px;
+        }
+
+        .distance-label {
+            font-size: 0.75em;
+            color: #6c757d;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .distance-value {
+            font-weight: 700;
+            font-size: 0.95em;
+        }
+
+        .direct-distance {
+            color: #28a745;
+        }
+
+        .driving-distance {
+            color: #dc3545;
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.8s ease;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .distance-row {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 15px;
+            }
+
+            .city-info {
+                margin-bottom: 10px;
+            }
+
+            .distance-details {
+                justify-content: space-between;
+            }
+
+            .distance-item {
+                min-width: 70px;
+            }
+
+            .chart-header h2 {
+                font-size: 1.5em;
+            }
+
+            .distance-value {
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .distance-details {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .distance-item {
+                flex-direction: row;
+                justify-content: space-between;
+                width: 100%;
+                min-width: auto;
+            }
+
+            .distance-label {
+                margin-bottom: 0;
+            }
+        }
+
+        /* Animation for progress bars */
+        .distance-row:hover .progress-bar {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+    <div class="distance-chart">
+        <div class="chart-header">
+            <h2>🏛️ Distances from Ouarzazate</h2>
+            <p>Gateway to Morocco's Desert - Travel Distances to Major Cities</p>
+        </div>
+        <div class="chart-container" id="chartContainer">
+            <!-- Cities will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        const cities = [
+            { name: "Marrakech", direct: 81.92, driving: 124.85 },
+            { name: "Agadir", direct: 154.38, driving: 220.87 },
+            { name: "Essaouira", direct: 174.85, driving: 237.51 },
+            { name: "Casablanca", direct: 189.15, driving: 270.17 },
+            { name: "Rabat", direct: 213.83, driving: 323.10 },
+            { name: "Meknès", direct: 220.01, driving: 415.73 },
+            { name: "Fès", direct: 241.80, driving: 451.68 },
+            { name: "Tétouan", direct: 333.77, driving: 509.87 },
+            { name: "Tangier", direct: 342.08, driving: 479.50 },
+            { name: "Oujda", direct: 388.30, driving: 513.57 },
+            { name: "Dakhla", direct: 745.49, driving: 1003.54 }
+        ];
+
+        const maxDriving = Math.max(...cities.map(city => city.driving));
+
+        function createChart() {
+            const container = document.getElementById('chartContainer');
+            
+            cities.forEach(city => {
+                const row = document.createElement('div');
+                row.className = 'distance-row';
+                
+                const progressWidth = (city.driving / maxDriving) * 100;
+                
+                row.innerHTML = `
+                    <div class="city-info">
+                        <div class="city-name">${city.name}</div>
+                    </div>
+                    <div class="distance-details">
+                        <div class="distance-item">
+                            <div class="distance-label">Direct</div>
+                            <div class="distance-value direct-distance">${city.direct.toFixed(0)} mi</div>
+                        </div>
+                        <div class="distance-item">
+                            <div class="distance-label">Driving</div>
+                            <div class="distance-value driving-distance">${city.driving.toFixed(0)} mi</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar" style="width: ${progressWidth}%"></div>
+                `;
+                
+                container.appendChild(row);
+            });
+        }
+
+        // Initialize chart when page loads
+        document.addEventListener('DOMContentLoaded', createChart);
+    </script>
+</body>
+</html>
